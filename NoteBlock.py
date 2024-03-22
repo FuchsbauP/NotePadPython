@@ -105,6 +105,17 @@ class SetNote:
         self.__thisMenuBar.add_cascade(
             label='Edit', menu=self.__thisEditMenu)
 
+        # View Menu Commands
+        # Dark Mode Command
+        self.__thisViewMenu.add_command(
+            label='Dark Mode', command=self.__darkMode)
+        # Light Mode Command
+        self.__thisViewMenu.add_command(
+            label='Light Mode', command=self.__lightMode)
+        # Adding Menu Bar - View Commands
+        self.__thisMenuBar.add_cascade(
+            label='View', menu=self.__thisViewMenu)
+
         # Help Menu Commands
         # About Command
         self.__thisHelpMenu.add_command(
@@ -168,6 +179,15 @@ class SetNote:
     # Paste Function
     def __paste(self):
         self.__thisTextArea.event_generate('<<Paste>>')
+
+    # View Functions
+    # Dark Mode Function
+    def __darkMode(self):
+        ...
+
+    # Light Mode Function
+    def __lightMode(self):
+        ...
 
     # Help Functions
     # About Function
