@@ -13,7 +13,7 @@ class SetNote:
     __thisWidth = 600
     __thisHeight = 400
     __thisTextArea = Text(__root, pady=10, padx=10,
-                          wrap='word', font=('Consolas 12'))
+                          wrap='word', font=('Consolas 12'), undo=True)
     __thisMenuBar = Menu(__root)
     __thisFileMenu = Menu(__thisMenuBar, tearoff=0)
     __thisEditMenu = Menu(__thisMenuBar, tearoff=0)
@@ -75,42 +75,55 @@ class SetNote:
         # File Menu Commands
         # Create New File
         self.__thisFileMenu.add_command(
-            label='New', command=self.__newFile)
+            label='New', command=self.__newFile, accelerator='Ctrl + N')
         # Open File
         self.__thisFileMenu.add_command(
-            label='Open', command=self.__openFile)
+            label='Open', command=self.__openFile, accelerator='Ctrl + O')
         # Save File
         self.__thisFileMenu.add_command(
-            label='Save', command=self.__saveFile)
+            label='Save', command=self.__saveFile, accelerator='Ctrl + S')
         # Separator
         self.__thisFileMenu.add_separator()
         # Exit
         self.__thisFileMenu.add_command(
-            label='Exit', command=self.__quitApplication)
+            label='Exit', command=self.__quitApplication, accelerator='Ctrl + Q')
         # Adding Menu Bar - File Commands
         self.__thisMenuBar.add_cascade(
             label='File', menu=self.__thisFileMenu)
 
         # Edit Menu Commands
+        # Undo Command
+        self.__thisEditMenu.add_command(
+            label='Undo', command=self.__undo, accelerator='Ctrl + Z')
+        # Separator
+        self.__thisEditMenu.add_separator()
         # Copy Command
         self.__thisEditMenu.add_command(
-            label='Copy', command=self.__copy)
+            label='Copy', command=self.__copy, accelerator='Ctrl + C')
         # Cut Command
         self.__thisEditMenu.add_command(
-            label='Cut', command=self.__cut)
+            label='Cut', command=self.__cut, accelerator='Ctrl + X')
         # Paste Command
         self.__thisEditMenu.add_command(
-            label='Paste', command=self.__paste)
+            label='Paste', command=self.__paste, accelerator='Ctrl + V')
+        # Delete Command
+        self.__thisEditMenu.add_command(
+            label='Delete', command=self.__delete, accelerator='Del')
+        # Separator
+        self.__thisEditMenu.add_separator()
+        # Search Command
+        self.__thisEditMenu.add_command(
+            label='Search', command=self.__search, accelerator='Ctrl + F')
         # Adding Menu Bar - Edit Commands
         self.__thisMenuBar.add_cascade(
             label='Edit', menu=self.__thisEditMenu)
 
         # View Menu Commands
         # Dark Mode Command
-        self.__thisViewMenu.add_command(
+        self.__thisViewMenu.add_checkbutton(
             label='Dark Mode', command=self.__darkMode)
         # Light Mode Command
-        self.__thisViewMenu.add_command(
+        self.__thisViewMenu.add_checkbutton(
             label='Light Mode', command=self.__lightMode)
         # Adding Menu Bar - View Commands
         self.__thisMenuBar.add_cascade(
@@ -126,16 +139,15 @@ class SetNote:
 
     # File Functions
     # New File Function
-
-    def __newFile(self):
+    def __newFile(self, event=None):
         self.__root.title('Untitled - NoteBlock')
         self.__file = None
         self.__thisTextArea.delete(1.0, END)
 
     # Open File Function
-    def __openFile(self):
+    def __openFile(self, event=None):
         self.__file = askopenfilename(
-            defaultextension='.txt', filetypes=[('All Files', '*.*'), ('Text Documents', '*.txt')])
+            defaultextension='.txt', filetypes=[('Text Documents', '*.txt'), ('All Files', '*.*')])
 
         if self.__file == '':
             self.__file = None
@@ -147,27 +159,33 @@ class SetNote:
             file.close()
 
     # Save File Function
-    def __saveFile(self):
+    def __saveFile(self, event=None):
         if self.__file == None:
             self.__file = asksaveasfilename(
-                initialfile='Untitled', defaultextension='.txt', filetypes=[('All Files', '*.*'), ('Text Documents', '*.txt')])
+                initialfile='Untitled', defaultextension='.txt', filetypes=[('Text Documents', '*.txt'), ('All Files', '*.*')])
             if self.__file == '':
                 self.__file = None
             else:
                 file = open(self.__file, 'w')
                 file.write(self.__thisTextArea.get(1.0, END))
                 file.close()
-                self.__root.title(os.path.basename(self.__file) + ' NoteBlock')
+                self.__root.title(os.path.basename(
+                    self.__file) + ' NoteBlock')
         else:
             file = open(self.__file, 'w')
             file.write(self.__thisTextArea.get(1.0, END))
             file.close()
 
     # Quit Application Function
-    def __quitApplication(self):
+    def __quitApplication(self, event=None):
         self.__root.destroy()
 
     # Edit Functions
+    # Undo Function
+    def __undo(self):
+        if self.__thisTextArea.edit_undo():
+            return True
+
     # Copy Function
     def __copy(self):
         self.__thisTextArea.event_generate('<<Copy>>')
@@ -179,6 +197,14 @@ class SetNote:
     # Paste Function
     def __paste(self):
         self.__thisTextArea.event_generate('<<Paste>>')
+
+    # Delete Function
+    def __delete(self):
+        self.__thisTextArea.delete(1.0, END)
+
+    # Search Function
+    def __search(self):
+        ...
 
     # View Functions
     # Dark Mode Function
@@ -193,9 +219,15 @@ class SetNote:
     # About Function
     def __showAbout(self):
         showinfo(
-            'NoteBlock - About', 'Versão: 0.0.1\nLicença: Grátis\nDev: https://github.com/FuchsbauP')
+            'NoteBlock - About', 'Versão: 0.0.2\nLicença: Grátis\nDev: https://github.com/FuchsbauP')
 
     def run(self):
+        self.__root.bind_all('<Control-N>', self.__newFile)
+        self.__root.bind_all('<Control-n>', self.__newFile)
+        self.__root.bind_all('<Control-O>', self.__openFile)
+        self.__root.bind_all('<Control-o>', self.__openFile)
+        self.__root.bind_all('<Control-S>', self.__saveFile)
+        self.__root.bind_all('<Control-s>', self.__saveFile)
         self.__root.mainloop()
 
 
