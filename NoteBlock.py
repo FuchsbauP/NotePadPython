@@ -17,10 +17,13 @@ class SetNote:
     __thisMenuBar = Menu(__root)
     __thisFileMenu = Menu(__thisMenuBar, tearoff=0)
     __thisEditMenu = Menu(__thisMenuBar, tearoff=0)
+    __thisFormatMenu = Menu(__thisMenuBar, tearoff=0)
     __thisViewMenu = Menu(__thisMenuBar, tearoff=0)
     __thisHelpMenu = Menu(__thisMenuBar, tearoff=0)
     __thisScrollBar = Scrollbar(__thisTextArea)
     __file = None
+    __darkMode_Var = BooleanVar()
+    __lightMode_Var = BooleanVar()
 
     def __init__(self, **kwargs):
 
@@ -44,6 +47,11 @@ class SetNote:
 
         try:
             self.__thisHeight = kwargs['height']
+        except KeyError:
+            pass
+
+        try:
+            self.__lightMode_Var.set(True)
         except KeyError:
             pass
 
@@ -118,13 +126,20 @@ class SetNote:
         self.__thisMenuBar.add_cascade(
             label='Edit', menu=self.__thisEditMenu)
 
+        # Format Commands
+        self.__thisFormatMenu.add_command(
+            label='Font...', command=self.__fontSelector)
+        # Adding Menu Bar - Format Commands
+        self.__thisMenuBar.add_cascade(
+            label='Format', menu=self.__thisFormatMenu)
+
         # View Menu Commands
         # Dark Mode Command
         self.__thisViewMenu.add_checkbutton(
-            label='Dark Mode', command=self.__darkMode)
+            label='Dark Mode', command=self.__darkMode, onvalue=True, offvalue=False, variable=self.__darkMode_Var)
         # Light Mode Command
         self.__thisViewMenu.add_checkbutton(
-            label='Light Mode', command=self.__lightMode)
+            label='Light Mode', command=self.__lightMode, onvalue=True, offvalue=False, variable=self.__lightMode_Var)
         # Adding Menu Bar - View Commands
         self.__thisMenuBar.add_cascade(
             label='View', menu=self.__thisViewMenu)
@@ -206,14 +221,46 @@ class SetNote:
     def __search(self):
         ...
 
+    # Format Functions
+    # Font Selection
+    def __fontSelector(self):
+        format_Window = Toplevel(self.__root)
+        format_Window.geometry('400x300')
+        format_Window.title('Font...')
+        Label(format_Window, text='Font:', font=(
+            'Consolas 9'), ).place(x=5, y=5)
+        __thisFontListbox = Listbox(format_Window, height=10)
+        with os.scandir(path='C:/Windows/Fonts') as entries:
+            for entry in entries:
+                if entry.is_file():
+                    __thisFontListbox.place(x=5, y=20)
+                    __thisFontListbox.insert(0, entry.name)
+                    # print(entry.name)
+
     # View Functions
     # Dark Mode Function
     def __darkMode(self):
-        ...
+        if self.__darkMode_Var.get():
+            self.__thisTextArea.config(
+                bg='#151515', fg='#FFFFFF', insertbackground='#FFFFFF')
+            self.__lightMode_Var.set(False)
+        else:
+            self.__thisTextArea.config(
+                bg='#FFFFFF', fg='#151515', insertbackground='#151515')
+            self.__lightMode_Var.set(True)
+            self.__darkMode_Var.set(False)
 
     # Light Mode Function
     def __lightMode(self):
-        ...
+        if self.__lightMode_Var.get():
+            self.__thisTextArea.config(
+                bg='#FFFFFF', fg='#151515', insertbackground='#151515')
+            self.__darkMode_Var.set(False)
+        else:
+            self.__thisTextArea.config(
+                bg='#151515', fg='#FFFFFF', insertbackground='#FFFFFF')
+            self.__darkMode_Var.set(True)
+            self.__lightMode_Var.set(False)
 
     # Help Functions
     # About Function
