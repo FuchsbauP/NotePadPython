@@ -2,7 +2,7 @@ Atividade de estudo realizada para elevar os conhecimento na linguagem Python.
 
 Nessa atividade foi desenvolvido um "Bloco de notas" com a ajuda do Tkinter e OS;
 
-O projeto ainda esté emdesenvolvimento, serão adicionadas novas funcionalidades em breve;
+O projeto ainda esté em desenvolvimento, serão adicionadas novas funcionalidades em breve;
 
 <h1>Futuras alterações:</h1>
 <ul>
